@@ -4,8 +4,8 @@ import shutil
 from flask import Flask, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
-UPLOAD_FOLDER = '/home/nullic/flask3/uploads/'
-TENSOR_FOLDER = '/home/nullic/flask3/tensor/'
+UPLOAD_FOLDER = '/path/to/uploads'
+TENSOR_FOLDER = '/path/to/tensor-feeding-image/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 app = Flask(__name__)
@@ -32,11 +32,8 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            # This will make copy of file so that a record can be kept of every file and tensor can run on a separate test.jpg
             shutil.copy((os.path.join(app.config['UPLOAD_FOLDER'], filename)),(os.path.join(app.config['TENSOR_FOLDER'], 'test.jpg')))
-            #file.save('/home/nullic/flask3/tensor')
-            # Thought this would allow me to save it twice. I was wrong, trying to figure a way around.
-            #file.save(os.path.join(app.config['TENSOR_FOLDER'], filename))
-            #shutil.copy('filename','/home/nullic/flask3/tensor/test.jpg')
             return 'File Made'
     return '''
     <!doctype html>
