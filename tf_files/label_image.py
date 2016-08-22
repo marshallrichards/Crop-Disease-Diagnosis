@@ -1,3 +1,4 @@
+# python 2.7 will make a python 3.x version soon
 import sys
 
 import tensorflow as tf
