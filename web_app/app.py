@@ -3,6 +3,7 @@ import os
 import sys
 import shutil
 import tensorflow as tf
+# This is running off 2.7 I am making a 3.x version
 # in the future I would like to be able to just import label_image and not run the whole thing inside here
 # need to figure out how to scope variable globably and have label_image run after image has been copied and saved
 # more analysis is needed
