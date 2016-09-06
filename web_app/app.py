@@ -1,9 +1,10 @@
 # written by Marshall Richards 2016
+# v0.1 this version has the tensorflow script built-in making it forcibly 2.7
 import os
 import sys
 import shutil
 import tensorflow as tf
-# This is running off 2.7 I am making a 3.x version
+import subprocess
 # in the future I would like to be able to just import label_image and not run the whole thing inside here
 # need to figure out how to scope variable globably and have label_image run after image has been copied and saved
 # more analysis is needed
@@ -17,7 +18,7 @@ from flask import Flask, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
 UPLOAD_FOLDER = 'uploads/' # directory for data collection to maintain permanent record
-TENSOR_FOLDER = 'tensor/'  # so this will be directory to feed file to tensorflow
+TENSOR_FOLDER = 'tensor/'  # directory to feed file to tensorflow
 ALLOWED_EXTENSIONS = set(['jpg', 'jpeg'])
 
 app = Flask(__name__)
@@ -48,6 +49,7 @@ def upload_file():
             # instead of one large Upload Folder
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             shutil.copy((os.path.join(app.config['UPLOAD_FOLDER'], filename)),(os.path.join(app.config['TENSOR_FOLDER'], 'test.jpg')))
+
             # Decided to compromise and just put the label_image.py code in here
             image_path = 'tensor/test.jpg' 
 
@@ -74,7 +76,7 @@ def upload_file():
             node_id = top_k[0] 
             human_string= label_lines[node_id]
             score = predictions[0][node_id]
-            print score
+            print(score)
             possibly_delete = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             if score >= .80:
                 if human_string == 'healthy':
@@ -84,9 +86,10 @@ def upload_file():
             else:
                 #Deletes file because not applicable if tensorflow couldn't match it past 80%
                 os.remove(possibly_delete)
-                return '''Could not make accurate prediction. File Removed
+                return '''Could not make accurate prediction. File Removed'''
                         
-                        '''
+                        
+                        
     return '''
     <!doctype html>
     <title>Soy Disease Diagnosis</title>
@@ -105,4 +108,4 @@ def upload_file():
     </form>
     '''
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80, debug=False)
+    app.run(host='0.0.0.0', port=8080, debug=False)
